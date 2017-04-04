@@ -38,6 +38,7 @@ docker_registry 'https://index.docker.io/v1/' do
   username project_secrets['docker']['username']
   password project_secrets['docker']['password']
   email project_secrets['docker']['email']
+  action :login
 end
 
 docker_image "image-to-push" do
