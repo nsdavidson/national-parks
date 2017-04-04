@@ -19,7 +19,8 @@ hab_build node['delivery']['change']['project'] do
 end
 
 execute 'install-artifact' do
-  command lazy { "sudo hab pkg install #{plan_dir}/results/#{last_build_env['pkg_artifact']}" }
+  command lazy { "sudo hab pkg install results/#{last_build_env['pkg_artifact']}" }
+  cwd node['delivery']['workspace']['repo']
   action :nothing
   notifies :run, 'execute[export-container]'
 end
