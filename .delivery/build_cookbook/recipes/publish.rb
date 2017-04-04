@@ -30,7 +30,7 @@ end
 docker_tag 'retag' do
   target_repo lazy { "#{last_build_env['pkg_origin']}/#{last_build_env['pkg_name']}" }
   target_tag lazy { "#{last_build_env['pkg_version']}-#{last_build_env['pkg_release']}" }
-  to_repo lazy { "#{project_secrets['docker']['username']}/#{last_build_env['pkg_name']}"
+  to_repo lazy { "#{project_secrets['docker']['username']}/#{last_build_env['pkg_name']}" }
   to_tag lazy { "#{last_build_env['pkg_version']}-#{last_build_env['pkg_release']}" }
   only_if { last_build_env['pkg_origin'] != project_secrets['docker']['username'] }
 end
