@@ -1,0 +1,15 @@
+version: '2'
+services:
+  mongo:
+    image: core/mongodb:latest
+    hostname: "mongodb"
+    environment:
+      HAB_MONGODB: "[mongod.net]\nbind_ip = '0.0.0.0'\n[mongod.security]\ncluster_auth_mode = ''"
+  app:
+    image: nsdavidson/national-parks
+    links:
+      - mongo:mongodb
+    command: --peer mongo --bind database:mongodb.default
+    ports:
+      - "8080:8080"
+    
