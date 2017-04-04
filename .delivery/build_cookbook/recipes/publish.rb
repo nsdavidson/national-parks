@@ -1,4 +1,5 @@
 ::Chef::Recipe.send(:include, HabitatBuildCookbook::Helpers)
+::Chef::Provider::Execute.send(:include, HabitatBuildCookbook::Helpers)
 
 project_secrets = get_project_secrets
 plan_dir = habitat_plan_dir
