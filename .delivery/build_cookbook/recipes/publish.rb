@@ -46,3 +46,8 @@ docker_image "image-to-push" do
   tag lazy { "#{last_build_env['pkg_version']}-#{last_build_env['pkg_release']}" }
   action :push
 end
+
+execute 'push-image' do
+  command lazy { "docker push #{project_secrets['docker']['username']}/#{last_build_env['pkg_name']}:#{last_build_env['pkg_version']}-#{last_build_env['pkg_release']}" }
+  action :run
+end
