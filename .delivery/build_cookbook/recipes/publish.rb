@@ -14,4 +14,10 @@ hab_build node['delivery']['change']['project'] do
   cwd node['delivery']['workspace']['repo']
   home_dir delivery_workspace
   action :build
+  notifies :run, 'execute[export-container]'
+end
+
+execute 'export-container' do
+  command "hab pkg export docker #{last_build_env['pkg_ident']}"
+  action :nothing
 end
