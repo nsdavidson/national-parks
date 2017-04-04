@@ -1,7 +1,7 @@
 project_secrets = get_project_secrets
 
 if habitat_origin_key?
-  keyname project_secrets['habitat']['keyname']
+  keyname = project_secrets['habitat']['keyname']
   origin = keyname.split('-')[0...-1].join('-')
 end
 
