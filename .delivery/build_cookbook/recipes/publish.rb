@@ -42,6 +42,6 @@ docker_registry 'https://index.docker.io/v1/' do
 end
 
 docker_image "#{project_secrets['docker']['username']}/#{last_build_env['pkg_name']}" do
-  tag "#{last_build_env['pkg_version']}-#{last_build_env['pkg_release']}"
+  tag lazy { "#{last_build_env['pkg_version']}-#{last_build_env['pkg_release']}" }
   action :push
 end
