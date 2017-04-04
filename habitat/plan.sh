@@ -27,7 +27,7 @@ do_build()
     export JAVA_HOME=$(hab pkg path core/jdk8)
 
     cd ${HAB_CACHE_SRC_PATH}
-    mvn package
+    mvn -q package
 }
 
 do_install()
