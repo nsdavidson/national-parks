@@ -33,6 +33,7 @@ docker_tag 'retag' do
   to_repo lazy { "#{project_secrets['docker']['username']}/#{last_build_env['pkg_name']}" }
   to_tag lazy { "#{last_build_env['pkg_version']}-#{last_build_env['pkg_release']}" }
   only_if { last_build_env['pkg_origin'] != project_secrets['docker']['username'] }
+  retries 5
 end
 
 docker_registry 'https://index.docker.io/v1/' do
