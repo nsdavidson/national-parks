@@ -15,6 +15,12 @@ hab_build node['delivery']['change']['project'] do
   cwd node['delivery']['workspace']['repo']
   home_dir delivery_workspace
   action :build
+  notifies :run, 'execute[install-artifact]'
+end
+
+execute 'install-artifact' do
+  command "sudo hab pkg install #{plan_dir}/results/#{last_build_env['pkg_artifact']}"
+  action :nothing
   notifies :run, 'execute[export-container]'
 end
 
