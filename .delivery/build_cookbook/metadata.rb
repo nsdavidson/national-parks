@@ -3,3 +3,8 @@ maintainer 'The Authors'
 maintainer_email 'you@example.com'
 license 'all_rights'
 version '0.1.0'
+
+depends 'delivery-sugar'
+depends 'delivery_build'
+depends 'habitat-build'
+depends 'delivery-truck'
