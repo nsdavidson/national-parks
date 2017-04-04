@@ -12,19 +12,17 @@ hab_build node['delivery']['change']['project'] do
   cwd node['delivery']['workspace']['repo']
   home_dir delivery_workspace
   action :build
-  notifies :run, 'execute[install-artifact]'
 end
 
 execute 'install-artifact' do
   command lazy { "sudo hab pkg install results/#{last_build_env['pkg_artifact']}" }
   cwd node['delivery']['workspace']['repo']
-  action :nothing
-  notifies :run, 'execute[export-container]'
+  action :run
 end
 
 execute 'export-container' do
   command lazy { "sudo hab pkg export docker #{last_build_env['pkg_ident']}" }
-  action :nothing
+  action :run
 end
 
 docker_tag 'retag' do
