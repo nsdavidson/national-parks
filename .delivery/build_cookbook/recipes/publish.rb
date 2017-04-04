@@ -19,6 +19,6 @@ hab_build node['delivery']['change']['project'] do
 end
 
 execute 'export-container' do
-  command "hab pkg export docker #{last_build_env['pkg_ident']}"
+  command lazy { "hab pkg export docker #{last_build_env['pkg_ident']}" }
   action :nothing
 end
