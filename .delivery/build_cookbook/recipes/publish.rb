@@ -1,3 +1,5 @@
+::Chef::Recipe.send(:include, HabitatBuildCookbook::Helpers)
+
 project_secrets = get_project_secrets
 
 if habitat_origin_key?
