@@ -41,7 +41,8 @@ docker_registry 'https://index.docker.io/v1/' do
   email project_secrets['docker']['email']
 end
 
-docker_image "#{project_secrets['docker']['username']}/#{last_build_env['pkg_name']}" do
+docker_image "image-to-push" do
+  repo lazy { "#{project_secrets['docker']['username']}/#{last_build_env['pkg_name']}" }
   tag lazy { "#{last_build_env['pkg_version']}-#{last_build_env['pkg_release']}" }
   action :push
 end
