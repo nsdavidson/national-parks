@@ -48,6 +48,6 @@ docker_image "image-to-push" do
 end
 
 execute 'push-image' do
-  command lazy { "docker push #{project_secrets['docker']['username']}/#{last_build_env['pkg_name']}:#{last_build_env['pkg_version']}-#{last_build_env['pkg_release']}" }
+  command lazy { "docker login -u #{project_secrets['docker']['username']} -p #{project_secrets['docker']['password']} && docker push #{project_secrets['docker']['username']}/#{last_build_env['pkg_name']}:#{last_build_env['pkg_version']}-#{last_build_env['pkg_release']}" }
   action :run
 end
