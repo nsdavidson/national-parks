@@ -8,6 +8,7 @@ spec:
     metadata:
       labels:
         app: mongodb
+        env: acceptance
     spec:
       containers:
       - name: mongodb
