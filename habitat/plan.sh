@@ -40,7 +40,6 @@ do_install()
     # in the package.
 
     local source_dir="${HAB_CACHE_SRC_PATH}"
-    local webapps_dir="$(hab pkg path core/tomcat8)/tc/webapps"
     cp -v ${source_dir}/target/${pkg_name}.war ${PREFIX}/
 
     # Copy our seed data so that it can be loaded into Mongo using our init hook

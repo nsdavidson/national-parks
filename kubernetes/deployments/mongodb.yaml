@@ -14,6 +14,7 @@ spec:
         image: ndavidson/mongodb:latest
         ports:
         - containerPort: 27017
+        - containerPort: 9638
         args: ["--peer", "ec2-52-88-178-0.us-west-2.compute.amazonaws.com"]
         env:
         - name: HAB_MONGODB

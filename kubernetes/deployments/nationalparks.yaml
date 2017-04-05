@@ -8,10 +8,11 @@ spec:
     metadata:
       labels:
         app: nationalparks
+        env: acceptance
     spec:
       containers:
       - name: nationalparks
-        image: ndavidson/national-parks:latest
+        image: ndavidson/national-parks:0.1.4-20170405180227
         ports:
         - containerPort: 8080
-        args: ["--peer", "mongodb-deployment", "--bind", "database:mongodb.default"]
+        args: ["--peer", "100.96.4.31", "--bind", "database:mongodb.default"]
