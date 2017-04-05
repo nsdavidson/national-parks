@@ -27,3 +27,5 @@ echo "pkg.svc_var_path      = {{pkg.svc_var_path}}"
 
 echo ${MONGODB_HOME}/bin/mongoimport --drop -d demo -c nationalparks --type json --jsonArray --file $(hab pkg path {{pkg.origin}}/national-parks)/national-parks.json ${MONGOIMPORT_OPTS}
 ${MONGODB_HOME}/bin/mongoimport --drop -d demo -c nationalparks --type json --jsonArray --file $(hab pkg path {{pkg.origin}}/national-parks)/national-parks.json ${MONGOIMPORT_OPTS}
+
+cp -v $(hab pkg path nsdavidson/national-parks)/national-parks.war $(hab pkg path core/tomcat8)/tc/webapps

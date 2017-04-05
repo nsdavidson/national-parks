@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mongodb-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: ndavidson/mongodb:latest
+        ports:
+        - containerPort: 27017
+        args: ["--peer", "ec2-52-88-178-0.us-west-2.compute.amazonaws.com"]
+        env:
+        - name: HAB_MONGODB
+          value: "[mongod.net]\nbind_ip = '0.0.0.0'\n[mongod.security]\ncluster_auth_mode = ''"

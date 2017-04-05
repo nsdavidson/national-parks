@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nationalparks-deployment
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: nationalparks
+    spec:
+      containers:
+      - name: app
+        image: ndavidson/national-parks:latest
+        ports:
+        - containerPort: 8080
+        args: ["--peer", "ec2-52-88-178-0.us-west-2.compute.amazonaws.com", "--bind", "database:mongodb.default"]
