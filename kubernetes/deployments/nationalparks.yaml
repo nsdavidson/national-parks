@@ -10,8 +10,8 @@ spec:
         app: nationalparks
     spec:
       containers:
-      - name: app
+      - name: nationalparks
         image: ndavidson/national-parks:latest
         ports:
         - containerPort: 8080
-        args: ["--peer", "ec2-52-88-178-0.us-west-2.compute.amazonaws.com", "--bind", "database:mongodb.default"]
+        args: ["--peer", "mongodb-deployment", "--bind", "database:mongodb.default"]
