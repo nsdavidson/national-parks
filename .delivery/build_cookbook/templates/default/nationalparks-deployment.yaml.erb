@@ -8,11 +8,11 @@ spec:
     metadata:
       labels:
         app: nationalparks
-        env: acceptance
+        env: <%= @environment %>
     spec:
       containers:
       - name: nationalparks
-        image: ndavidson/national-parks:0.1.4-20170405201703
+        image: ndavidson/national-parks:<%= @container_tag %>
         ports:
         - containerPort: 8080
-        args: ["--peer", "100.96.4.31", "--bind", "database:mongodb.default"]
+        args: ["--peer", "<%= @mongo_ip %>", "--bind", "database:mongodb.default"]
