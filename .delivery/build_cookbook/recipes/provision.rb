@@ -35,8 +35,17 @@ template "#{node['delivery']['workspace']['repo']}/nationalparks-service.yaml" d
   action :create
 end
 
-env_count = shell_out("/usr/local/bin/kubectl get deployments --kubeconfig #{kube_config} -l app=nationalparks,env=#{node['delivery']['change']['stage']} 2>&1 | grep -c 'No resources found'").stdout.chomp.to_i
+# Deploy mongodb
+# env_count = shell_out("/usr/local/bin/kubectl get deployments --kubeconfig #{kube_config} -l app=mongodb,env=#{node['delivery']['change']['stage']} 2>&1 | grep -c 'No resources found'").stdout.chomp.to_i
+# command = env_count > 0 ? 'create' : 'apply'
 
+# execute 'create-or-update-deployment' do
+#   command "/usr/local/bin/kubectl #{command} --kubeconfig #{kube_config} -f #{node['delivery']['workspace']['repo']}/mongodb-deployment.yaml"
+#   action :run
+# end
+
+# Deploy the app
+env_count = shell_out("/usr/local/bin/kubectl get deployments --kubeconfig #{kube_config} -l app=nationalparks,env=#{node['delivery']['change']['stage']} 2>&1 | grep -c 'No resources found'").stdout.chomp.to_i
 command = env_count > 0 ? 'create' : 'apply'
 
 execute 'create-or-update-deployment' do
@@ -48,3 +57,4 @@ execute 'create-or-update-service' do
   command "/usr/local/bin/kubectl #{command} --kubeconfig #{kube_config} -f #{node['delivery']['workspace']['repo']}/nationalparks-service.yaml"
   action :run
 end
+
