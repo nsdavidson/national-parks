@@ -5,7 +5,7 @@
 # Copyright (c) 2017 The Authors, All Rights Reserved.
 
 kube_config = "/var/opt/delivery/workspace/.kube/config"
-build_info = data_bag_item('nationalparks-build-info')
+build_info = data_bag_item('nationalparks-build-info', 'latest')
 # get mongo ip
 mongo_ip = shell_out!("/usr/local/bin/kubectl get pods --kubeconfig #{kube_config} -l app=mongodb,env=#{node['delivery']['change']['stage']} -o json | jq '.items[0].status.podIP' -r").stdout.chomp
 
@@ -33,13 +33,16 @@ template "#{node['delivery']['workspace']['repo']}/nationalparks-service.yaml" d
   action :create
 end
 
-# deploy updated containers to acceptance
-execute 'update-deployment' do
-  command "/usr/local/bin/kubectl apply --kubeconfig #{kube_config} -f #{node['delivery']['workspace']['repo']}/nationalparks-deployment.yaml"
+env_count = shell_out!("/usr/local/bin/kubectl get deployments --kubeconfig #{kube_config} -l app=nationalparks,env=#{node['delivery']['change']['stage']} 2>&1 | grep -c 'No resources found'").stdout.chomp.to_i
+
+command = env_count > 0 ? 'create' : 'apply'
+
+execute 'create-or-update-deployment' do
+  command "/usr/local/bin/kubectl #{command} --kubeconfig #{kube_config} -f #{node['delivery']['workspace']['repo']}/nationalparks-deployment.yaml"
   action :run
 end
 
-execute 'update-service' do
-  command "/usr/local/bin/kubectl apply --kubeconfig #{kube_config} -f #{node['delivery']['workspace']['repo']}/nationalparks-service.yaml"
+execute 'create-or-update-service' do
+  command "/usr/local/bin/kubectl #{command} --kubeconfig #{kube_config} -f #{node['delivery']['workspace']['repo']}/nationalparks-service.yaml"
   action :run
 end
