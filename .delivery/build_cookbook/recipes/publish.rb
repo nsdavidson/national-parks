@@ -55,8 +55,8 @@ end
 ruby_block 'update-build-info' do
   block do
     build_info = {
-      id: 'latest',
-      image_tag: "#{last_build_env['pkg_version']}-#{last_build_env['pkg_release']}"
+      'id' => 'latest',
+      'image_tag' => "#{last_build_env['pkg_version']}-#{last_build_env['pkg_release']}"
     }
     databag_item = Chef::DataBagItem.new
     databag_item.data_bag("nationalparks-build-info")
