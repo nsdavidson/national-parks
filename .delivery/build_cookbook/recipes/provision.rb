@@ -12,7 +12,7 @@ build_info = with_server_config { data_bag_item('nationalparks-build-info', 'lat
 mongo_ip = shell_out!("/usr/local/bin/kubectl get pods --kubeconfig #{kube_config} -l app=mongodb,env=#{node['delivery']['change']['stage']} -o json | jq '.items[0].status.podIP' -r").stdout.chomp
 
 # TODO: get docker tag for current build from publish phase
-docker_tag = build_info[:image_tag]
+docker_tag = build_info['image_tag']
 
 # lay down service/deployment templates
 template "#{node['delivery']['workspace']['repo']}/nationalparks-deployment.yaml" do
