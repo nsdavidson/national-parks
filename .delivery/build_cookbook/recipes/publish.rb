@@ -55,7 +55,7 @@ end
 ruby_block 'update-build-info' do
   block do
     build_info = {
-      id: 'latest'
+      id: 'latest',
       image_tag: "#{last_build_env['pkg_version']}-#{last_build_env['pkg_release']}"
     }
     databag_item = Chef::DataBagItem.new
