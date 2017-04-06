@@ -5,7 +5,7 @@
 # Copyright (c) 2017 The Authors, All Rights Reserved.
 
 kube_config = "/var/opt/delivery/workspace/.kube/config"
-build_info = data_bag_item('nationalparks-build-info')
+build_info = data_bag_item('nationalparks-build-info', 'latest')
 # get mongo ip
 mongo_ip = shell_out!("/usr/local/bin/kubectl get pods --kubeconfig #{kube_config} -l app=mongodb,env=#{node['delivery']['change']['stage']} -o json | jq '.items[0].status.podIP' -r").stdout.chomp
 
