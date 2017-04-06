@@ -52,7 +52,7 @@ execute 'push-image' do
   action :run
 end
 
-if search('nationalparks-build-info', 'latest').empty?
+if search(:'nationalparks-build-info', 'id:latest').empty?
   databag = Chef::DataBag.new
   databag.name('nationalparks-build-info')
   databag.create
