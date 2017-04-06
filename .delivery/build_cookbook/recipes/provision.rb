@@ -4,8 +4,10 @@
 #
 # Copyright (c) 2017 The Authors, All Rights Reserved.
 
+kube_config = "/var/opt/delivery/workspace/.kube/config"
+
 # get mongo ip
-mongo_ip = shell_out!("/usr/local/bin/kubectl get pods -l app=mongodb,env=#{node['delivery']['change']['stage']} -o json | jq '.items[0].status.podIP' -r").stdout.chomp
+mongo_ip = shell_out!("/usr/local/bin/kubectl get pods --kubeconfig #{kube_config} -l app=mongodb,env=#{node['delivery']['change']['stage']} -o json | jq '.items[0].status.podIP' -r").stdout.chomp
 
 # TODO: get docker tag for current build from publish phase
 docker_tag = 'latest'
@@ -33,11 +35,11 @@ end
 
 # deploy updated containers to acceptance
 execute 'update-deployment' do
-  command "/usr/local/bin/kubectl apply -f #{node['delivery']['workspace']['repo']}/nationalparks-deployment.yaml"
+  command "/usr/local/bin/kubectl apply --kubeconfig #{kube_config} -f #{node['delivery']['workspace']['repo']}/nationalparks-deployment.yaml"
   action :run
 end
 
 execute 'update-service' do
-  command "/usr/local/bin/kubectl apply -f #{node['delivery']['workspace']['repo']}/nationalparks-service.yaml"
+  command "/usr/local/bin/kubectl apply --kubeconfig #{kube_config} -f #{node['delivery']['workspace']['repo']}/nationalparks-service.yaml"
   action :run
 end
