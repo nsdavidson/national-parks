@@ -5,13 +5,13 @@
 # Copyright (c) 2017 The Authors, All Rights Reserved.
 
 # get mongo ip
-mongo_ip = shell_out("kubectl get pods -l app=mongodb,env=#{node['delivery']['change']['stage']} -o json | jq '.items[0].status.podIP' -r").stdout.chomp
-  # get docker tag for current build
-  # lay down service/deployment templates
-  # deploy updated containers to acceptance
+mongo_ip = shell_out!("/usr/local/bin/kubectl get pods -l app=mongodb,env=#{node['delivery']['change']['stage']} -o json | jq '.items[0].status.podIP' -r").stdout.chomp
+
+# TODO: get docker tag for current build from publish phase
 docker_tag = 'latest'
 
-template '/tmp/nationalparks-deployment.yaml' do
+# lay down service/deployment templates
+template "#{node['delivery']['workspace']['repo']}/nationalparks-deployment.yaml" do
   source 'nationalparks-deployment.yaml.erb'
   mode '0755'
   variables({
@@ -22,7 +22,7 @@ template '/tmp/nationalparks-deployment.yaml' do
   action :create
 end
 
-template '/tmp/nationalparks-service.yaml' do
+template "#{node['delivery']['workspace']['repo']}/nationalparks-service.yaml" do
   source 'nationalparks-service.yaml.erb'
   mode '0755'
   variables({
@@ -30,4 +30,14 @@ template '/tmp/nationalparks-service.yaml' do
   })
   action :create
 end
-  
+
+# deploy updated containers to acceptance
+execute 'update-deployment' do
+  command "/usr/local/bin/kubectl apply -f #{node['delivery']['workspace']['repo']}/nationalparks-deployment.yaml"
+  action :run
+end
+
+execute 'update-service' do
+  command "/usr/local/bin/kubectl apply -f #{node['delivery']['workspace']['repo']}/nationalparks-service.yaml"
+  action :run
+end
