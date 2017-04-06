@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: nationalparks-deployment
+  name: nationalparks-<%= @environment %>
 spec:
   replicas: 3
   template:

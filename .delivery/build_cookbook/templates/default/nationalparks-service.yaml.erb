@@ -1,7 +1,7 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: nationalparks
+  name: nationalparks-<%= @environment %>
 spec:
   selector:
     app: nationalparks
