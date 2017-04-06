@@ -35,7 +35,7 @@ template "#{node['delivery']['workspace']['repo']}/nationalparks-service.yaml" d
   action :create
 end
 
-env_count = shell_out!("/usr/local/bin/kubectl get deployments --kubeconfig #{kube_config} -l app=nationalparks,env=#{node['delivery']['change']['stage']} 2>&1 | grep -c 'No resources found'").stdout.chomp.to_i
+env_count = shell_out("/usr/local/bin/kubectl get deployments --kubeconfig #{kube_config} -l app=nationalparks,env=#{node['delivery']['change']['stage']} 2>&1 | grep -c 'No resources found'").stdout.chomp.to_i
 
 command = env_count > 0 ? 'create' : 'apply'
 
