@@ -1,14 +1,14 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: mongodb-deployment
+  name: mongodb-delivered
 spec:
   replicas: 1
   template:
     metadata:
       labels:
         app: mongodb
-        env: acceptance
+        env: delivered
     spec:
       containers:
       - name: mongodb
