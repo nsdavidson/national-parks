@@ -51,3 +51,12 @@ execute 'push-image' do
   command lazy { "docker login -u #{project_secrets['docker']['username']} -p #{project_secrets['docker']['password']} && docker push #{project_secrets['docker']['username']}/#{last_build_env['pkg_name']}:#{last_build_env['pkg_version']}-#{last_build_env['pkg_release']}" }
   action :run
 end
+
+build_info = {
+  image_tag: "#{last_build_env['pkg_version']}-#{last_build_env['pkg_release']}"
+}
+
+databag_item = Chef::DataBagItem.new
+databag_item.data_bag("nationalparks-build-info")
+databag_item.raw_data = build_info
+data_bag.save
