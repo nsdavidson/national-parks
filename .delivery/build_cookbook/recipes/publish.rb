@@ -52,15 +52,18 @@ execute 'push-image' do
   action :run
 end
 
+if search('nationalparks-build-info', 'latest').empty?
+  databag = Chef::DataBag.new
+  databag.name('nationalparks-build-info')
+  databag.create
+end
+
 ruby_block 'update-build-info' do
   block do
     build_info = {
       'id' => 'latest',
       'image_tag' => "#{last_build_env['pkg_version']}-#{last_build_env['pkg_release']}"
     }
-    databag = Chef::DataBag.new
-    databag.name('nationalparks-build-info')
-    databag.create
     databag_item = Chef::DataBagItem.new
     databag_item.data_bag("nationalparks-build-info")
     databag_item.raw_data = build_info
