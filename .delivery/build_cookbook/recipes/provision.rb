@@ -35,7 +35,7 @@ template "#{node['delivery']['workspace']['repo']}/nationalparks-service.yaml" d
   action :create
 end
 
-# Deploy mongodb
+# TODO: Deploy mongodb, this should work.
 # env_count = shell_out("/usr/local/bin/kubectl get deployments --kubeconfig #{kube_config} -l app=mongodb,env=#{node['delivery']['change']['stage']} 2>&1 | grep -c 'No resources found'").stdout.chomp.to_i
 # command = env_count > 0 ? 'create' : 'apply'
 
@@ -53,6 +53,7 @@ execute 'create-or-update-deployment' do
   action :run
 end
 
+# TODO:  Add a service check like the deployment check above
 execute 'create-or-update-service' do
   command "/usr/local/bin/kubectl #{command} --kubeconfig #{kube_config} -f #{node['delivery']['workspace']['repo']}/nationalparks-service.yaml"
   action :run
