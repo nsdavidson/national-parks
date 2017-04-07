@@ -22,6 +22,23 @@ chef_gem "inspec" do
   action :upgrade
 end
 
+ruby_block 'wait-for-dns' do
+  block do
+    while true
+      begin
+        Resolv.getaddress("np-#{node['delivery']['change']['stage']}.success.chef.co")
+        break
+      rescue
+        puts "Waiting for np-#{node['delivery']['change']['stage']}.success.chef.co to become available..."
+        sleep 20
+        next
+      end
+    end
+  end
+  action :run
+end
+
+
 execute "run smoke tests on #{host_endpoint}" do
   command "inspec exec #{smoke_spec} --attrs #{attributes_file} --log-level=debug"
   cwd node['delivery']['workspace']['repo']
