@@ -19,7 +19,7 @@ end
 # First create a mongo deployment
 ruby_block 'get-mongo-deployment-count' do
   block do
-    count = Mixlib::ShellOut.new("/usr/local/bin/kubectl get deployments --kubeconfig #{kube_config} -l app=mongodb,env=#{node['delivery']['change']['stage']} 2>&1 | grep -c 'No resources found'").stdout.chomp.to_i
+    count = Mixlib::ShellOut.new("/usr/local/bin/kubectl get deployments --kubeconfig #{kube_config} -l app=mongodb,env=#{node['delivery']['change']['stage']} 2>&1 | grep -c 'No resources found'").run_command.stdout.chomp.to_i
     node.run_state["mongo_command"] = count > 0 ? 'create' : 'apply'
   end
   action :run
@@ -33,8 +33,7 @@ end
 # get mongo ip
 ruby_block 'get-mongo-ip' do
   block do
-    node.run_state["mongo_ip"] = Mixlib::ShellOut.new("/usr/local/bin/kubectl get pods --kubeconfig #{kube_config} -l app=mongodb,env=#{node['delivery']['change']['stage']} -o json | jq '.items[0].status.podIP' -r").stdout.chomp
-    puts "I FOUND THE IP ADDRESS: #{node.run_state['mongo_ip']}"  
+    node.run_state["mongo_ip"] = Mixlib::ShellOut.new("/usr/local/bin/kubectl get pods --kubeconfig #{kube_config} -l app=mongodb,env=#{node['delivery']['change']['stage']} -o json | jq '.items[0].status.podIP' -r").run_command.stdout.chomp  
   end
   action :run
 end
