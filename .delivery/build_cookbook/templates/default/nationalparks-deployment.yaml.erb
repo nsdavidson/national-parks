@@ -15,4 +15,4 @@ spec:
         image: ndavidson/national-parks:<%= @container_tag %>
         ports:
         - containerPort: 8080
-        args: ["--peer", "<%= @mongo_ip %>", "--bind", "database:mongodb.default"]
+        args: ["--peer", "<%= @prism_ip %>", "--bind", "database:mongodb.<%= @environment %>", "--group", "<%= @environment %>"]
