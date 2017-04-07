@@ -6,9 +6,9 @@
 #
 
 host_endpoint = "http://np-#{node['delivery']['change']['stage']}.success.chef.co/national-parks"
-attributes_file = "#{node['delivery']['workspace']['repo']}/smoke-attributes-#{node['delivery']['change']['stage']}.yaml"
+attributes_file = "smoke-attributes-#{node['delivery']['change']['stage']}.yaml"
 
-template attributes_file do
+template "#{node['delivery']['workspace']['repo']}/#{attributes_file}" do
   source 'smoke-attributes.yaml.erb'
   mode '0755'
   variables({
