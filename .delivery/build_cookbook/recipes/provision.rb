@@ -86,7 +86,7 @@ end
 ruby_block 'get-elb' do
   block do
     node.run_state['elb'] = Mixlib::ShellOut.new("kubectl get service nationalparks-#{node['delivery']['change']['stage']} -o json | jq '.status.loadBalancer.ingress[0].hostname' -r").run_command.stdout.chomp
-    puts "I AM THE ELB: #{Mixlib::ShellOut.new("kubectl get service nationalparks-#{node['delivery']['change']['stage']} -o json | jq '.status.loadBalancer.ingress[0].hostname' -r").run_command.stdout.chomp}"
+    puts "I AM THE STAGE: #{node['delivery']['change']['stage']}"
   end
   action :run
 end
