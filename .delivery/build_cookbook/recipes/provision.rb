@@ -92,4 +92,5 @@ route53_record 'create-env-cname' do
   value node.run_state['elb']
   type "CNAME"
   overwrite true
+  zone_id 'Z1NW3SLGMJY6GJ'
 end
