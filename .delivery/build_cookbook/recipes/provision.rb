@@ -86,6 +86,7 @@ end
 ruby_block 'get-elb' do
   block do
     node.run_state['elb'] = Mixlib::ShellOut.new("kubectl get service nationalparks-#{node['delivery']['change']['stage']} -o json | jq '.status.loadBalancer.ingress[0].hostname' -r").run_command.stdout.chomp
+    puts "I AM THE ELB: #{Mixlib::ShellOut.new("kubectl get service nationalparks-#{node['delivery']['change']['stage']} -o json | jq '.status.loadBalancer.ingress[0].hostname' -r").run_command.stdout.chomp}"
   end
   action :run
 end
@@ -96,5 +97,6 @@ route53_record 'create-env-cname' do
   value lazy { node.run_state['elb'] }
   type "CNAME"
   overwrite true
+  ttl 60
   zone_id 'Z1NW3SLGMJY6GJ'
 end
