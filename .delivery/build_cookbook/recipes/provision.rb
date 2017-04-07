@@ -45,22 +45,24 @@ docker_tag = build_info['image_tag']
 template "#{node['delivery']['workspace']['repo']}/nationalparks-deployment.yaml" do
   source 'nationalparks-deployment.yaml.erb'
   mode '0755'
-  variables({
-    :environment => node['delivery']['change']['stage'],
-    :container_tag => docker_tag,
-    :mongo_ip => node.run_state['mongo_ip']
-  })
+  variables(
+    lazy {
+      {
+        :environment => node['delivery']['change']['stage'],
+        :container_tag => docker_tag,
+        :mongo_ip => node.run_state['mongo_ip']
+      }
+    }
+  )
   action :create
 end
 
 template "#{node['delivery']['workspace']['repo']}/nationalparks-service.yaml" do
   source 'nationalparks-service.yaml.erb'
   mode '0755'
-  variables(
-    lazy {
-      {:environment => node['delivery']['change']['stage']}
-    }
-  )
+  variables({
+    :environment => node['delivery']['change']['stage'],
+  })
   action :create
 end
 
