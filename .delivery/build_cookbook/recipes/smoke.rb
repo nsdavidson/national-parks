@@ -6,10 +6,10 @@
 #
 
 host_endpoint = "http://np-#{node['delivery']['change']['stage']}.success.chef.co/national-parks/"
-attributes_file = "smoke-attributes-#{node['delivery']['change']['stage']}.yaml"
+attributes_file = "#{node['delivery']['workspace']['repo']}/#smoke-attributes-#{node['delivery']['change']['stage']}.yaml"
 smoke_spec = ".delivery/build_cookbook/test/smoke/default/smoke.rb"
 
-template "#{node['delivery']['workspace']['repo']}/#{attributes_file}" do
+template attributes_file do
   source 'smoke-attributes.yaml.erb'
   mode '0755'
   variables({
@@ -23,7 +23,9 @@ chef_gem "inspec" do
 end
 
 execute "run smoke tests on #{host_endpoint}" do
-  command "inspec exec #{smoke_spec} --attrs #{node['delivery']['workspace']['repo']}/#{attributes_file}"
+  command "inspec exec #{smoke_spec} --attrs #{attributes_file} --log-level=debug"
   cwd node['delivery']['workspace']['repo']
+  live_stream true
+  environment 'PATH' => "/opt/chefdk/embedded/bin:#{ENV['PATH']}"
   action :run
 end
