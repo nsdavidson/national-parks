@@ -10,7 +10,7 @@ build_info = with_server_config { data_bag_item('nationalparks-build-info', 'lat
 # First create a mongo deployment
 ruby_block 'get-mongo-deployment-count' do
   block do
-    count = MixLib::ShellOut.new("/usr/local/bin/kubectl get deployments --kubeconfig #{kube_config} -l app=mongodb,env=#{node['delivery']['change']['stage']} 2>&1 | grep -c 'No resources found'").stdout.chomp.to_i
+    count = Mixlib::ShellOut.new("/usr/local/bin/kubectl get deployments --kubeconfig #{kube_config} -l app=mongodb,env=#{node['delivery']['change']['stage']} 2>&1 | grep -c 'No resources found'").stdout.chomp.to_i
     node.run_state["mongo_command"] = count > 0 ? 'create' : 'apply'
   end
   action :run
