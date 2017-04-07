@@ -34,6 +34,7 @@ end
 ruby_block 'get-mongo-ip' do
   block do
     node.run_state["mongo_ip"] = Mixlib::ShellOut.new("/usr/local/bin/kubectl get pods --kubeconfig #{kube_config} -l app=mongodb,env=#{node['delivery']['change']['stage']} -o json | jq '.items[0].status.podIP' -r").stdout.chomp
+    puts "I FOUND THE IP ADDRESS: #{node.run_state['mongo_ip']}"  
   end
   action :run
 end
