@@ -110,5 +110,4 @@ route53_record 'create-env-cname' do
   overwrite true
   ttl 60
   zone_id 'Z1NW3SLGMJY6GJ'
-  notifies :run, 'execute[sleep240]', :immediately
 end
