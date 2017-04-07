@@ -7,13 +7,8 @@
 kube_config = "/var/opt/delivery/workspace/.kube/config"
 build_info = with_server_config { data_bag_item('nationalparks-build-info', 'latest') }
 
-execute 'sleep60' do
-  command 'sleep 60'
-  action :nothing
-end
-
-execute 'sleep240' do
-  command 'sleep 240'
+execute 'sleep30' do
+  command 'sleep 30'
   action :nothing
 end
 
@@ -38,7 +33,7 @@ end
 execute 'create-or-update-mongo-deployment' do
   command lazy { "/usr/local/bin/kubectl #{node.run_state["mongo_command"]} --kubeconfig #{kube_config} -f #{node['delivery']['workspace']['repo']}/mongodb-deployment.yaml" }
   action :run
-  notifies :run, 'execute[sleep60]', :immediately
+  notifies :run, 'execute[sleep30]', :immediately
 end
 
 # get mongo ip
@@ -91,7 +86,7 @@ command = app_service_count > 0 ? 'create' : 'apply'
 execute 'create-or-update-service' do
   command "/usr/local/bin/kubectl #{command} --kubeconfig #{kube_config} -f #{node['delivery']['workspace']['repo']}/nationalparks-service.yaml"
   action :run
-  notifies :run, 'execute[sleep60]', :immediately
+  notifies :run, 'execute[sleep30]', :immediately
 end
 
 #elb = shell_out("kubectl get service nationalparks-#{node['delivery']['change']['stage']} -o json | jq '.status.loadBalancer.ingress[0].hostname' -r").stdout.chomp
