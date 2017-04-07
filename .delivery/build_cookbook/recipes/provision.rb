@@ -56,9 +56,11 @@ end
 template "#{node['delivery']['workspace']['repo']}/nationalparks-service.yaml" do
   source 'nationalparks-service.yaml.erb'
   mode '0755'
-  variables({
-    :environment => node['delivery']['change']['stage'],
-  })
+  variables(
+    lazy {
+      {:environment => node['delivery']['change']['stage']}
+    }
+  )
   action :create
 end
 
@@ -89,7 +91,7 @@ end
 include_recipe 'route53'
 route53_record 'create-env-cname' do
   name "np-#{node['delivery']['change']['stage']}.success.chef.co"
-  value node.run_state['elb']
+  value lazy { node.run_state['elb'] }
   type "CNAME"
   overwrite true
   zone_id 'Z1NW3SLGMJY6GJ'
