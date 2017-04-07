@@ -7,6 +7,15 @@
 kube_config = "/var/opt/delivery/workspace/.kube/config"
 build_info = with_server_config { data_bag_item('nationalparks-build-info', 'latest') }
 
+template "#{node['delivery']['workspace']['repo']}/mongodb-deployment.yaml" do
+  source 'mongodb-deployment.yaml.erb'
+  mode '0755'
+  variables({
+    :environment => node['delivery']['change']['stage']
+  })
+  action :create
+end
+
 # First create a mongo deployment
 ruby_block 'get-mongo-deployment-count' do
   block do
