@@ -23,7 +23,7 @@ template "#{node['delivery']['workspace']['repo']}/mongodb-deployment.yaml" do
   source 'mongodb-deployment.yaml.erb'
   mode '0755'
   variables({
-    :prism_ip => node.run_state["prism_ip"]
+    :prism_ip => node.run_state["prism_ip"],
     :environment => node['delivery']['change']['stage']
   })
   action :create
