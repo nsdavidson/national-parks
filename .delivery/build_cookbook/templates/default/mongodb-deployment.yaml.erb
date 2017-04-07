@@ -16,7 +16,7 @@ spec:
         ports:
         - containerPort: 27017
         - containerPort: 9638
-        args: ["--peer", "ec2-52-88-178-0.us-west-2.compute.amazonaws.com"]
+        args: ["--peer", "<%= @prism_ip %>", "--group", "<%= @environment %>"]
         env:
         - name: HAB_MONGODB
           value: "[mongod.net]\nbind_ip = '0.0.0.0'\n[mongod.security]\ncluster_auth_mode = ''"

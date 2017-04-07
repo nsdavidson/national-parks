@@ -10,12 +10,20 @@ build_info = with_server_config { data_bag_item('nationalparks-build-info', 'lat
 execute 'sleep30' do
   command 'sleep 30'
   action :nothing
+
+# get prism ip
+ruby_block 'get-prism-ip' do
+  block do
+    node.run_state["prism_ip"] = Mixlib::ShellOut.new("/usr/local/bin/kubectl get pods --kubeconfig #{kube_config} -l run=prism -o json | jq '.items[0].status.podIP' -r").run_command.stdout.chomp  
+  end
+  action :run
 end
 
 template "#{node['delivery']['workspace']['repo']}/mongodb-deployment.yaml" do
   source 'mongodb-deployment.yaml.erb'
   mode '0755'
   variables({
+    :prism_ip => node.run_state["prism_ip"]
     :environment => node['delivery']['change']['stage']
   })
   action :create
@@ -36,14 +44,6 @@ execute 'create-or-update-mongo-deployment' do
   notifies :run, 'execute[sleep30]', :immediately
 end
 
-# get mongo ip
-ruby_block 'get-mongo-ip' do
-  block do
-    node.run_state["mongo_ip"] = Mixlib::ShellOut.new("/usr/local/bin/kubectl get pods --kubeconfig #{kube_config} -l app=mongodb,env=#{node['delivery']['change']['stage']} -o json | jq '.items[0].status.podIP' -r").run_command.stdout.chomp  
-  end
-  action :run
-end
-
 # TODO: get docker tag for current build from publish phase
 docker_tag = build_info['image_tag']
 
@@ -56,7 +56,7 @@ template "#{node['delivery']['workspace']['repo']}/nationalparks-deployment.yaml
       {
         :environment => node['delivery']['change']['stage'],
         :container_tag => docker_tag,
-        :mongo_ip => node.run_state['mongo_ip']
+        :prism_ip => node.run_state['prism_ip']
       }
     }
   )
