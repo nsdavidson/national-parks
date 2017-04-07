@@ -33,7 +33,7 @@ end
 # get mongo ip
 ruby_block 'get-mongo-ip' do
   block do
-    node.run_state["mongo_ip"] = Chef::ShellOut.new("/usr/local/bin/kubectl get pods --kubeconfig #{kube_config} -l app=mongodb,env=#{node['delivery']['change']['stage']} -o json | jq '.items[0].status.podIP' -r").stdout.chomp
+    node.run_state["mongo_ip"] = Mixlib::ShellOut.new("/usr/local/bin/kubectl get pods --kubeconfig #{kube_config} -l app=mongodb,env=#{node['delivery']['change']['stage']} -o json | jq '.items[0].status.podIP' -r").stdout.chomp
   end
   action :run
 end
@@ -79,3 +79,17 @@ execute 'create-or-update-service' do
 end
 
 #elb = shell_out("kubectl get service nationalparks-#{node['delivery']['change']['stage']} -o json | jq '.status.loadBalancer.ingress[0].hostname' -r").stdout.chomp
+ruby_block 'get-elb' do
+  block do
+    node.run_state['elb'] = Mixlib::Shellout("kubectl get service nationalparks-#{node['delivery']['change']['stage']} -o json | jq '.status.loadBalancer.ingress[0].hostname' -r").stdout.chomp
+  end
+  action :run
+end
+
+include_recipe 'route53'
+route53_record 'create-env-cname' do
+  name "np-#{node['delivery']['change']['stage']}.success.chef.co"
+  value node.run_state['elb']
+  type "CNAME"
+  overwrite true
+end
