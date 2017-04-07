@@ -81,7 +81,7 @@ end
 #elb = shell_out("kubectl get service nationalparks-#{node['delivery']['change']['stage']} -o json | jq '.status.loadBalancer.ingress[0].hostname' -r").stdout.chomp
 ruby_block 'get-elb' do
   block do
-    node.run_state['elb'] = Mixlib::Shellout("kubectl get service nationalparks-#{node['delivery']['change']['stage']} -o json | jq '.status.loadBalancer.ingress[0].hostname' -r").stdout.chomp
+    node.run_state['elb'] = Mixlib::ShellOut("kubectl get service nationalparks-#{node['delivery']['change']['stage']} -o json | jq '.status.loadBalancer.ingress[0].hostname' -r").stdout.chomp
   end
   action :run
 end
