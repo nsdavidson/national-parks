@@ -10,6 +10,7 @@ build_info = with_server_config { data_bag_item('nationalparks-build-info', 'lat
 execute 'sleep30' do
   command 'sleep 30'
   action :nothing
+end
 
 # get prism ip
 ruby_block 'get-prism-ip' do
