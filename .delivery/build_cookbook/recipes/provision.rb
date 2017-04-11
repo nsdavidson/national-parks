@@ -72,6 +72,7 @@ end
 execute 'create-or-update-deployment' do
   command "/usr/local/bin/kubectl apply -R --kubeconfig #{kube_config} -f #{node['delivery']['workspace']['repo']}/k8s_files"
   action :run
+  notifies :run, 'execute[sleep30]', :immediately
 end
 
 ruby_block 'get-elb' do
