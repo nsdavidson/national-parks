@@ -20,7 +20,13 @@ ruby_block 'get-prism-ip' do
   action :run
 end
 
-template "#{node['delivery']['workspace']['repo']}/mongodb-deployment.yaml" do
+directory "#{node['delivery']['workspace']['repo']}/k8s_files" do
+  owner 'dbuild'
+  group 'dbuild'
+  mode '0755'
+end
+
+template "#{node['delivery']['workspace']['repo']}/k8s_files/mongodb-deployment.yaml" do
   source 'mongodb-deployment.yaml.erb'
   mode '0755'
   variables(
@@ -34,26 +40,11 @@ template "#{node['delivery']['workspace']['repo']}/mongodb-deployment.yaml" do
   action :create
 end
 
-# First create a mongo deployment
-ruby_block 'get-mongo-deployment-count' do
-  block do
-    count = Mixlib::ShellOut.new("/usr/local/bin/kubectl get deployments --kubeconfig #{kube_config} -l app=mongodb,env=#{node['delivery']['change']['stage']} 2>&1 | grep -c 'No resources found'").run_command.stdout.chomp.to_i
-    node.run_state["mongo_command"] = count > 0 ? 'create' : 'apply'
-  end
-  action :run
-end
-
-execute 'create-or-update-mongo-deployment' do
-  command lazy { "/usr/local/bin/kubectl #{node.run_state["mongo_command"]} --kubeconfig #{kube_config} -f #{node['delivery']['workspace']['repo']}/mongodb-deployment.yaml" }
-  action :run
-  notifies :run, 'execute[sleep30]', :immediately
-end
-
 # TODO: get docker tag for current build from publish phase
 docker_tag = build_info['image_tag']
 
 # lay down service/deployment templates
-template "#{node['delivery']['workspace']['repo']}/nationalparks-deployment.yaml" do
+template "#{node['delivery']['workspace']['repo']}/k8s_files/nationalparks-deployment.yaml" do
   source 'nationalparks-deployment.yaml.erb'
   mode '0755'
   variables(
@@ -68,7 +59,7 @@ template "#{node['delivery']['workspace']['repo']}/nationalparks-deployment.yaml
   action :create
 end
 
-template "#{node['delivery']['workspace']['repo']}/nationalparks-service.yaml" do
+template "#{node['delivery']['workspace']['repo']}/k8s_files/nationalparks-service.yaml" do
   source 'nationalparks-service.yaml.erb'
   mode '0755'
   variables({
@@ -78,23 +69,11 @@ template "#{node['delivery']['workspace']['repo']}/nationalparks-service.yaml" d
 end
 
 # Deploy the app
-app_deployment_count = shell_out("/usr/local/bin/kubectl get deployments --kubeconfig #{kube_config} -l app=nationalparks,env=#{node['delivery']['change']['stage']} 2>&1 | grep -c 'No resources found'").stdout.chomp.to_i
-command = app_deployment_count > 0 ? 'create' : 'apply'
-
 execute 'create-or-update-deployment' do
-  command "/usr/local/bin/kubectl #{command} --kubeconfig #{kube_config} -f #{node['delivery']['workspace']['repo']}/nationalparks-deployment.yaml"
+  command "/usr/local/bin/kubectl apply -R --kubeconfig #{kube_config} -f #{node['delivery']['workspace']['repo']}/k8s_files"
   action :run
 end
 
-app_service_count = shell_out("/usr/local/bin/kubectl get services --kubeconfig #{kube_config} -l app=nationalparks,env=#{node['delivery']['change']['stage']} 2>&1 | grep -c 'No resources found'").stdout.chomp.to_i
-command = app_service_count > 0 ? 'create' : 'apply'
-execute 'create-or-update-service' do
-  command "/usr/local/bin/kubectl #{command} --kubeconfig #{kube_config} -f #{node['delivery']['workspace']['repo']}/nationalparks-service.yaml"
-  action :run
-  notifies :run, 'execute[sleep30]', :immediately
-end
-
-#elb = shell_out("kubectl get service nationalparks-#{node['delivery']['change']['stage']} -o json | jq '.status.loadBalancer.ingress[0].hostname' -r").stdout.chomp
 ruby_block 'get-elb' do
   block do
     node.run_state['elb'] = Mixlib::ShellOut.new("/usr/local/bin/kubectl --kubeconfig #{kube_config} get service nationalparks-#{node['delivery']['change']['stage']} -o json | jq '.status.loadBalancer.ingress[0].hostname' -r").run_command.stdout.chomp
