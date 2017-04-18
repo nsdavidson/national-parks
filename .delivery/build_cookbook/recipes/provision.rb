@@ -7,8 +7,8 @@
 kube_config = "/var/opt/delivery/workspace/.kube/config"
 build_info = with_server_config { data_bag_item('nationalparks-build-info', 'latest') }
 
-execute 'sleep30' do
-  command 'sleep 30'
+execute 'sleep45' do
+  command 'sleep 45'
   action :nothing
 end
 
@@ -72,7 +72,7 @@ end
 execute 'create-or-update-deployment' do
   command "/usr/local/bin/kubectl apply -R --kubeconfig #{kube_config} -f #{node['delivery']['workspace']['repo']}/k8s_files"
   action :run
-  notifies :run, 'execute[sleep30]', :immediately
+  notifies :run, 'execute[sleep45]', :immediately
 end
 
 ruby_block 'get-elb' do
