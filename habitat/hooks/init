@@ -29,3 +29,8 @@ echo ${MONGODB_HOME}/bin/mongoimport --drop -d demo -c nationalparks --type json
 ${MONGODB_HOME}/bin/mongoimport --drop -d demo -c nationalparks --type json --jsonArray --file $(hab pkg path {{pkg.origin}}/national-parks)/national-parks.json ${MONGOIMPORT_OPTS}
 
 cp -v $(hab pkg path nsdavidson/national-parks)/national-parks.war $(hab pkg path core/tomcat8)/tc/webapps
+
+{{#if cfg.inspec_enabled}}
+echo "Starting InSpec..."
+hab service load nsdavidson/inspec-profile-national-parks-profile
+{{~/if}}
