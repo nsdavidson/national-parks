@@ -1,3 +1,4 @@
 mongodb_service_host = "localhost"
 mongodb_service_port = 27017
 mongodb_database = "demo"
+inspec_enabled = true

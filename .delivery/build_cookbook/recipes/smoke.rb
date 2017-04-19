@@ -29,3 +29,4 @@ execute "run smoke tests on #{host_endpoint}" do
   environment 'PATH' => "/opt/chefdk/embedded/bin:#{ENV['PATH']}"
   action :run
 end
+
